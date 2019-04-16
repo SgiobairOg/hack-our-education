@@ -34,8 +34,8 @@ class LanguageNav extends Component {
           {({ updateLanguage }) => (
             <header>
               <select onChange={updateLanguage}>
-                <option value="french">FR</option>
                 <option value="english">EN</option>
+                <option value="french">FR</option>
               </select>
             </header>
           )}
@@ -49,17 +49,41 @@ class LanguageNav extends Component {
       </LanguageConsumer>
     );
     
-class Main extends Component {
-    constructor(props) {
-        super(props);
+class Main extends Component {      
+
+  render() {
+    return (
+      <LanguageNav>
+        <div>
+          <Header />
+          <Title />
+          <p>
+            <TranslatableText
+              dictionary={{
+                french: "Arrête d'être la victime du système éducatif, rejoins notre communauté et hack ton éducation avec nous. Collabore sur des projets et challenges avec d'autres étudiants pour gagner de l'expérience.",
+                english: "Stop being the victim of the educational system, join our community and hack your education with us. Collaborate on meaningful challenges and projects with others students to gain experience."
+              }}
+            />
+          </p>
+        </div>
+      </LanguageNav>
+    );
+  }
+}
+
+class Title extends Component {
+    static contextType = LanguageContext;
+    constructor(props,context) {
+        super(props,context);
         this.state = {
-            word : "Let's hack our education together."
-        };
+            word_en : "Let's hack our education together.",
+            word_fr : "Hackons notre éducation ensemble."
+         };
         this.interv = 'undefined';
         this.canChange = false;
         this.globalCount = 0;
         this.count = 0;
-        this.INITIAL_WORD = this.state.word;
+        this.INITIAL_WORD = this.state.word_en;
         this.isGoing = false;
         this.mouseEnter = this.mouseEnter.bind(this);
     }
@@ -79,11 +103,17 @@ class Main extends Component {
     return finalWord
     }
       
+
     mouseEnter() {
         if(this.isGoing) return;
-    
         this.isGoing = true;
-        let randomWord = this.getRandomWord(this.state.word);
+        let randomWord = null;
+        if(this.context.language === 'english') {
+            randomWord = this.getRandomWord(this.state.word_en);
+        } else {
+            randomWord = this.getRandomWord(this.state.word_fr);
+            this.INITIAL_WORD = this.state.word_fr;
+        }
         this.setState(
             {word: randomWord}
             )
@@ -97,9 +127,17 @@ class Main extends Component {
                 finalWord += this.getRandomLetter();
             }
             }
-        this.setState(
-            {word: finalWord}
+
+        if(this.context.language === 'english') {
+            this.setState(
+                {word_en: finalWord}
             )
+        } else {
+            this.setState(
+                {word_fr: finalWord}
+            )
+        }
+
 
         if(this.canChange) {
             this.count++;
@@ -118,34 +156,19 @@ class Main extends Component {
         },50)
         
           }
-    
-      
 
-  render() {
+   render() {
     return (
-      <LanguageNav>
-        <div>
-          <Header />
-          <h1 onMouseEnter={this.mouseEnter}>
-            <TranslatableText
-              dictionary={{
-                french: "Hackons notre éducation ensemble.",
-                english: this.state.word
-              }}
-            />
-          </h1>
-          <p>
-            <TranslatableText
-              dictionary={{
-                french: "Arrête d'être la victime du système éducatif, rejoins notre communauté et hack ton éducation avec nous. Collabore sur des projets et challenges avec d'autres étudiants pour gagner de l'expérience.",
-                english: "Stop being the victim of the educational system, join our community and hack your education with us. Collaborate on meaningful challenges and projects with others students to gain experience."
-              }}
-            />
-          </p>
-        </div>
-      </LanguageNav>
-    );
-  }
+       <h1 onMouseEnter={this.mouseEnter}>
+       <TranslatableText
+         dictionary={{
+            french: this.state.word_fr,
+            english: this.state.word_en
+         }}
+       />
+     </h1>
+   );
+ }
 }
 
 export default Main;
