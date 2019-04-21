@@ -1,0 +1,21 @@
+/** 
+* <div className="console">
+*    <span className="console__text" ref={this.text} />
+*    <span className="cursor">{this.cursorCharacter}</span>
+* </div>
+**/
+
+.cursor {
+  animation: blink 0.7s linear infinite;
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
